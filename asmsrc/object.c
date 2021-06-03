@@ -167,7 +167,7 @@ char recLen[3];
 	/* Output the S-record to the object file */
 /*	fputs("Here comes an S-record...\n", objFile); */
 	fputs(sRecord, objFile);
-	if ferror(objFile) {
+	if (ferror(objFile)) {
 		fputs(objErrorMsg, stderr);
 		exit(0);
 		}
@@ -185,7 +185,7 @@ int	finishObj()
 
 	/* Write out a termination S-record and close the file*/
 	fputs("S9030000FC\n", objFile);
-	if ferror(objFile) {
+	if (ferror(objFile)) {
 		fputs(objErrorMsg, stderr);
 		exit(0);
 		}

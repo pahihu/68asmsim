@@ -64,7 +64,7 @@ int     mover_t_m_times[11] = {
 
 int	MOVE()
 {
-long	size;				/* 'size' holds the instruction size */
+Long	size;				/* 'size' holds the instruction size */
 int	src, dst;		/* 'src' and 'dst' hold the addressing mode codes */
 							/* for instruction execution time computation */
 
@@ -115,10 +115,10 @@ return SUCCESS;
 int	MOVEP()
 {
 int	address, Dx, disp, count, direction, reg;
-long	temp, size;
+Long	temp, size;
 
-mem_request (&PC, (long) WORD, &temp);
-from_2s_comp (temp, (long) WORD, &temp);
+mem_request (&PC, (Long) WORD, &temp);
+from_2s_comp (temp, (Long) WORD, &temp);
 
 address = A[a_reg(inst&0x07)] + (temp & WORD);
 
@@ -142,10 +142,10 @@ for (;count > 0; count--)
 	{
 	disp = 8 * (count - 1);
 	if (direction)
-		mem_put ( (long)((Dx >> disp) & BYTE) , address, (long) BYTE);
+		mem_put ( (Long)((Dx >> disp) & BYTE) , address, (Long) BYTE);
 	else
 		{
-		mem_req (address, (long) BYTE, &temp);
+		mem_req (address, (Long) BYTE, &temp);
 		switch  (count) {
 			case 4 :	D[reg] = (D[reg] & 0x00ffffff) | (temp * 0x1000000);
 						break;
@@ -170,7 +170,7 @@ return SUCCESS;
 
 int	MOVEA()
 {
-long	size;
+Long	size;
 int	src;
 
 if (inst & 0x1000)
@@ -188,7 +188,7 @@ if (eff_addr(size, ALL_ADDR, FALSE))
 	return (BAD_INST);
 
 if (size == WORD) 
-	sign_extend ((int)EV1, (long) WORD, &EV1);
+	sign_extend ((int)EV1, (Long) WORD, &EV1);
 
 A[a_reg((inst >> 9) & 0x07)] = EV1;
 
@@ -201,10 +201,10 @@ return SUCCESS;
 int	MOVE_FR_SR()
 {
 
-if (eff_addr ((long) WORD, DATA_ALT_ADDR, TRUE))
+if (eff_addr ((Long) WORD, DATA_ALT_ADDR, TRUE))
 	return (BAD_INST);
 
-put (EA1, (long) SR, (long) WORD);
+put (EA1, (Long) SR, (Long) WORD);
 
 inc_cyc ((inst & 0x0030) ? 8 : 6);
 
@@ -217,10 +217,10 @@ return SUCCESS;
 int	MOVE_TO_CCR()
 {
 
-if (eff_addr ((long) WORD, DATA_ADDR, TRUE))
+if (eff_addr ((Long) WORD, DATA_ADDR, TRUE))
 	return (BAD_INST);
 
-put (&SR, EV1, (long) BYTE);
+put (&SR, EV1, (Long) BYTE);
 
 inc_cyc (12);
 
@@ -236,10 +236,10 @@ int	MOVE_TO_SR()
 if (! (SR & sbit))
 	return (NO_PRIVILEGE);
 
-if (eff_addr ((long) WORD, DATA_ADDR, TRUE))
+if (eff_addr ((Long) WORD, DATA_ADDR, TRUE))
 	return (BAD_INST);
 
-put (&SR, EV1, (long) WORD);
+put (&SR, EV1, (Long) WORD);
 
 inc_cyc (12);
 
@@ -253,16 +253,16 @@ int	MOVEM()
 {
 int	direction, addr_modes_mask, counter, addr_mode;
 int	displacement, address, total_displacement;
-long	size, mask_list, temp;
+Long	size, mask_list, temp;
 
-mem_request (&PC, (long) WORD, &mask_list);
+mem_request (&PC, (Long) WORD, &mask_list);
 
 if (inst & 0x0040)
 	size = LONG;
 else
 	size = WORD;
 
-if (direction = (inst & 0x0400))
+if ((direction = (inst & 0x0400)))
 	addr_modes_mask = CONTROL_ADDR | bit_4;
 else
 	addr_modes_mask = CONT_ALT_ADDR | bit_5;
@@ -270,7 +270,7 @@ else
 if (eff_addr (size, addr_modes_mask, FALSE))
 	return (BAD_INST);			/* bad effective address */
 
-address = (long) ( (long)EA1 - (long)&memory[0]);
+address = (int) ( (long)EA1 - (long)&memory[0]);
 total_displacement = address;
 
 if ((inst & 0x0038) != 0x20)
@@ -306,7 +306,7 @@ for (counter = 0; counter < 16; counter++)
 			{
 			if (size == WORD)		/* if size is WORD then sign-extend */
 				{
-				mem_req (address, (long) WORD, &temp);
+				mem_req (address, (Long) WORD, &temp);
 				sign_extend ((int) temp, LONG, &temp);
 				}
 			if (counter < 8)
@@ -380,8 +380,8 @@ source = inst & 0xff;
 dest = D[reg];
 
 /* the data register is sign extended to a longword */
-sign_extend ((int)source, (long) BYTE, &D[reg]);
-sign_extend ((int)D[reg], (long) WORD, &D[reg]);
+sign_extend ((int)source, (Long) BYTE, &D[reg]);
+sign_extend ((int)D[reg], (Long) WORD, &D[reg]);
 
 cc_update (N_A, GEN, GEN, ZER, ZER, source, dest, D[reg], LONG, 0);
 inc_cyc (4);

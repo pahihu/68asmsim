@@ -12,8 +12,9 @@ were input at the simulator command line.
 
 #include "extern.h"
 
+int iswhite(int,char*);
 
-scan (str, ptrbuf, maxcnt)               /* scan up to maxcnt words in str */
+int scan (str, ptrbuf, maxcnt)      /* scan up to maxcnt words in str */
 char	*str;
 char	*ptrbuf[];
 int	maxcnt;
@@ -43,8 +44,9 @@ int	maxcnt;
 
 
 
-iswhite (c, qflag)
-char c, *qflag;
+int iswhite (c, qflag)
+int c;
+char *qflag;
 {
 
 	if (c == '\'') *qflag = ~*qflag;

@@ -11,10 +11,11 @@ This file contains the routines to display online help information
 
 
 #include <stdio.h>
+#include <stdlib.h>
 #include "extern.h"
 
 
-show_topics()
+int show_topics()
 {
 
 	clrscr();
@@ -31,7 +32,7 @@ show_topics()
 
 }
 
-gethelp()
+int gethelp()
 {
 	char *sub;
 
@@ -40,7 +41,7 @@ gethelp()
 	if (wcount > 1)
 		sub = gettext(2,"");
 	else {
-		if (gets(lbuf,80)==NULL)
+		if (GetS(lbuf,80)==NULL)
 			exit(0);
 		wcount = scan(lbuf,wordptr,10);
 		sub = wordptr[0];
@@ -74,7 +75,7 @@ if (same("exc",sub))
 	printf("   this simulator.\n");
 	printf("\n");
 	printf("<HIT RETURN TO CONTINUE>\n");
-	if (gets(lbuf,80)==NULL) exit(0);
+	if (GetS(lbuf,80)==NULL) exit(0);
 	printf("\n");
 	printf("Illegal exception occurs when an illegal instruction opcode\n");
 	printf("   is executed.  It also occurs when the ILLEGAL instruction\n");
@@ -90,7 +91,7 @@ if (same("exc",sub))
 	printf("   attempts a division by zero.\n");
 	printf("\n");
 	printf("<HIT RETURN TO CONTINUE>\n");
-	if (gets(lbuf,80)==NULL) exit(0);
+	if (GetS(lbuf,80)==NULL) exit(0);
 	printf("\n");
 	printf("Exception processing begins by creating the appropriate\n");
 	printf("   exception stack frame for the particular exception group\n");
@@ -102,7 +103,7 @@ if (same("exc",sub))
 	printf("   below:\n");
 	printf("\n");
 	printf("<HIT RETURN TO CONTINUE>\n");
-	if (gets(lbuf,80)==NULL) exit(0);
+	if (GetS(lbuf,80)==NULL) exit(0);
 	printf("\n");
 	printf("       Location (Hex)        Assignment\n");
 	printf("\n");
@@ -119,7 +120,7 @@ if (same("exc",sub))
 	printf("        080 to 0BC           TRAP instruction vectors\n");
 	printf("\n");
 	printf("<HIT RETURN TO CONTINUE>\n");
-	if (gets(lbuf,80)==NULL) exit(0);
+	if (GetS(lbuf,80)==NULL) exit(0);
 	printf("\n");
 	printf("When the simulator starts up the supervisor bit is set on\n");
 	printf("   and the supervisor stack pointer is set to the value\n");
@@ -130,7 +131,7 @@ if (same("exc",sub))
 	printf("   the 68000 Programmer's Reference Manual, Section 4.\n");
 	printf("\n");
 	printf("<HIT RETURN TO CONTINUE>\n");
-	if (gets(lbuf,80)==NULL) exit(0);
+	if (GetS(lbuf,80)==NULL) exit(0);
 	show_topics();
 	}
 if (same("bp",sub))
@@ -300,7 +301,7 @@ if (same("ex_off",sub))
 	}
 
 	at (7,12);
-	if (gets(lbuf,80)==NULL)
+	if (GetS(lbuf,80)==NULL)
 		exit(0);
 	wcount = scan(lbuf,wordptr,10);
 	sub = wordptr[0];

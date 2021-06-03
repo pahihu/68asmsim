@@ -14,6 +14,7 @@ routines are :
 
 
 #include <stdio.h>
+#include <stdlib.h>
 #include "extern.h"         					/* global declarations */
 #include "opcodes.h"        					/* opcode masks for decoding */
 														/* the 68000 instructions */
@@ -23,7 +24,7 @@ routines are :
 /**************************** int decode_size() ****************************
 
    name       : int decode_size (result)
-   parameters : long *result : the appropriate mask for the decoded size
+   parameters : Long *result : the appropriate mask for the decoded size
    function   : decodes the size field in the instruction being processed
                   and returns a mask to be used in instruction execution.
                   For example, if the size field was "01" then the mask 
@@ -33,7 +34,7 @@ routines are :
 
 
 int	decode_size (result)
-long	*result;
+Long	*result;
 {
 	int	bits;
 
@@ -62,7 +63,7 @@ long	*result;
 /**************************** int eff_addr() *******************************
 
    name       : int eff_addr (size, mask, add_times)
-   parameters : long size : the appropriate size mask
+   parameters : Long size : the appropriate size mask
                 int mask : the effective address modes mask to be used
                 int add_times : tells whether to increment the cycle counter
                       (there are times when we don't want to)
@@ -75,13 +76,13 @@ long	*result;
 
 
 int eff_addr (size, mask, add_times)
-long	size;
+Long	size;
 int	mask;
 int	add_times;
 {
 	int	mode, reg, legal, addr, move_operation;
 	int	bwinc, linc;
-	long	ext, temp_ext, inc_size, ind_reg, *value, disp;
+	Long	ext, temp_ext, inc_size, ind_reg, *value, disp;
 
 	if (
 			( 
@@ -122,7 +123,7 @@ int	add_times;
 	   case	1 : if (mask & bit_2)
 			{
 			reg = a_reg(reg);
-			value = &A[reg];
+			value = (Long*) &A[reg];
 			bwinc = linc = 0;
 			legal = TRUE;
 			}
@@ -130,7 +131,7 @@ int	add_times;
 	   case	2 : if (mask & bit_3)
 			{
 			reg = a_reg(reg);
-			value = (long) &memory[A[reg]];
+			value = (Long*) &memory[A[reg]];
 			bwinc = 4;
 			linc = 8;
 			legal = TRUE;
@@ -144,7 +145,7 @@ int	add_times;
 			else if (size == WORD)
 				inc_size = 2;
 			else inc_size = 4;
-			value = (long) &memory[A[reg]];
+			value = (Long*) &memory[A[reg]];
 			A[reg] = A[reg] + inc_size;
 			bwinc = 4;
 			linc = 8;
@@ -160,7 +161,7 @@ int	add_times;
 				inc_size = 2;
 			else inc_size = 4;
 			A[reg] = A[reg] - inc_size;
-			value = (long) &memory[A[reg]];
+			value = (Long*) &memory[A[reg]];
 			bwinc = 6;
 			linc = 10;
 			legal = TRUE;
@@ -169,9 +170,9 @@ int	add_times;
 	   case	5 : if (mask & bit_6)
 			{
 			reg = a_reg(reg);
-			mem_request (&PC, (long) WORD, &ext);
-			from_2s_comp (ext, (long) WORD, &ext);
-			value = (long) &memory[A[reg] + (ext & WORD)];
+			mem_request (&PC, (Long) WORD, &ext);
+			from_2s_comp (ext, (Long) WORD, &ext);
+			value = (Long*) &memory[A[reg] + (ext & WORD)];
 			bwinc = 8;
 			linc = 12;
 			legal = TRUE;
@@ -181,10 +182,10 @@ int	add_times;
 			{
 			reg = a_reg(reg);
 			/* fetch extension word */
-			mem_request (&PC, (long) WORD, &ext);
+			mem_request (&PC, (Long) WORD, &ext);
 			disp = ext & 0xff;
 			sign_extend (disp, BYTE, &disp);
-			from_2s_comp (disp, (long) WORD, &disp);
+			from_2s_comp (disp, (Long) WORD, &disp);
 			/* get index register value */
 			if (ext & 0x8000)
 				ind_reg = A[a_reg((ext & 0x7000) >> 12)];
@@ -194,9 +195,9 @@ int	add_times;
 			if (!(ext & 0x0800))
 				{
 				sign_extend (ind_reg, WORD, &ind_reg);
-				from_2s_comp (ind_reg, (long) LONG, &ind_reg);
+				from_2s_comp (ind_reg, (Long) LONG, &ind_reg);
 				}
-			value = (long) (&memory[A[reg] + (disp & WORD) + ind_reg]);
+			value = (Long*) (&memory[A[reg] + (disp & WORD) + ind_reg]);
 			bwinc = 10;
 			linc = 14;
 			legal = TRUE;
@@ -205,8 +206,8 @@ int	add_times;
 	   case	7 : switch (reg) {
 			   case	0 : if (mask & bit_8)
 	    			{
-					mem_request (&PC, (long) WORD, &ext);
-					value = (long) &memory[ext];
+					mem_request (&PC, (Long) WORD, &ext);
+					value = (Long*) &memory[ext];
 					bwinc = 8;
 					linc = 12;
 					legal = TRUE;
@@ -214,10 +215,10 @@ int	add_times;
 				    break;
 			   case	1 : if (mask & bit_9)
 					{
-					mem_request (&PC, (long) WORD, &ext);
-					mem_request (&PC, (long) WORD, &temp_ext);
+					mem_request (&PC, (Long) WORD, &ext);
+					mem_request (&PC, (Long) WORD, &temp_ext);
 					ext = ext * 0xffff + temp_ext;
-					value = (long) &memory[ext & ADDRMASK];
+					value = (Long*) &memory[ext & ADDRMASK];
 					bwinc = 12;
 					linc = 16;
 					legal = TRUE;
@@ -225,9 +226,9 @@ int	add_times;
 					 break;
 			   case	2 : if (mask & bit_10)
 					{
-					mem_request (&PC, (long) WORD, &ext);
-					from_2s_comp (ext, (long) WORD, &ext);
-					value = (long) &memory[PC + (ext & WORD) - 1];
+					mem_request (&PC, (Long) WORD, &ext);
+					from_2s_comp (ext, (Long) WORD, &ext);
+					value = (Long*) &memory[PC + (ext & WORD) - 1];
 					bwinc = 8;
 					linc = 12;
 					legal = TRUE;
@@ -236,10 +237,10 @@ int	add_times;
 			   case	3 : if (mask & bit_11)
 					{
 					/* fetch extension word */
-					mem_request (&PC, (long) WORD, &ext);
+					mem_request (&PC, (Long) WORD, &ext);
 					disp = ext & 0xff;
 					sign_extend (disp, BYTE, &disp);
-					from_2s_comp (disp, (long) WORD, &disp);
+					from_2s_comp (disp, (Long) WORD, &disp);
 					/* get index register value */
 					if (ext & 0x8000)
 					   ind_reg = A[a_reg((ext & 0x7000) >> 12)];
@@ -249,10 +250,10 @@ int	add_times;
 					if (!(ext & 0x0800))
 						{
 						sign_extend (ind_reg, WORD, &ind_reg);
-						from_2s_comp (ind_reg, (long) LONG, &ind_reg);
+						from_2s_comp (ind_reg, (Long) LONG, &ind_reg);
 						}
 					ext = ext & 0x00ff;
-					value = (long) (&memory[PC - 1 + (disp & WORD) + ind_reg]);
+					value = (Long*) (&memory[PC - 1 + (disp & WORD) + ind_reg]);
 					bwinc = 10;
 					linc = 14;
 					legal = TRUE;
@@ -261,7 +262,7 @@ int	add_times;
 			   case	4 : if (mask & bit_12)
 					{
 					if ((size == BYTE) || (size == WORD))
-						mem_request (&PC, (long) WORD, &ext);
+						mem_request (&PC, (Long) WORD, &ext);
 					else
 						mem_request (&PC, LONG, &ext);
 					global_temp = ext;
@@ -391,7 +392,7 @@ int runprog()
 
 /**************************** int exec_inst() *****************************
 
-   name       : int exec_inst ()
+   name       : void exec_inst ()
    parameters : NONE
    function   : executes a single instruction at the location pointed 
                   to by PC.  it is called from runprog() and sets the 
@@ -408,12 +409,13 @@ int runprog()
 
 ****************************************************************************/
 
+extern void dasm(int);
 
-int exec_inst()
+void exec_inst()
 {
 int	start, finish, exec_result, i;
 
-if ( !(mem_request (&PC, (long) WORD, &inst)) )
+if ( !(mem_request (&PC, (Long) WORD, &inst)) )
    {
 	start = offsets[(inst & FIRST_FOUR) >> 12];
 	finish = offsets[((inst & FIRST_FOUR) >> 12) + 1] - 1;
@@ -444,6 +446,7 @@ if ( !(mem_request (&PC, (long) WORD, &inst)) )
 			if (trace) {
 				printf ("executing a %s instruction at location %4x",
 					inst_arr[i].name, PC-2);
+            dasm(PC-2);
 				windowLine();
 				}
 
@@ -560,7 +563,7 @@ if ( !(mem_request (&PC, (long) WORD, &inst)) )
 
    name       : int exception (class, loc, r_w)
    parameters : int class : class of exception to be taken
-                long loc : the address referenced in the case of an
+                Long loc : the address referenced in the case of an
                   address or bus error
                 int r_w : in the case of an address or bus error, this
                   tells whether the reference was a read or write 
@@ -571,9 +574,9 @@ if ( !(mem_request (&PC, (long) WORD, &inst)) )
 
 ****************************************************************************/
 
-int	exception(class, loc, r_w)
+void	exception(class, loc, r_w)
 int	class;
-long	loc;
+Long	loc;
 int	r_w;
 {
 	int	info_word;
@@ -583,7 +586,7 @@ int	r_w;
 		A[8] -= 4;		/* create the stack frame for class 1 and 2 exceptions */
 		put (&memory[A[8]], OLD_PC, LONG);
 		A[8] -= 2;
-		put (&memory[A[8]], (long) SR, (long) WORD);
+		put (&memory[A[8]], (Long) SR, (Long) WORD);
 		}
 	else
 		{						/* class 0 exception (address or bus error) */
@@ -591,16 +594,16 @@ int	r_w;
 		A[8] -= 4;						/* now create the exception stack frame */
 		put (&memory[A[8]], OLD_PC, LONG);
 		A[8] -= 2;
-		put (&memory[A[8]], (long) SR, (long) WORD);
+		put (&memory[A[8]], (Long) SR, (Long) WORD);
 		A[8] -= 2;
-		put (&memory[A[8]], (long) inst, (long) WORD);
+		put (&memory[A[8]], (Long) inst, (Long) WORD);
 		A[8] -= 4;
 		put (&memory[A[8]], loc, LONG);
 		A[8] -= 2;
 		info_word = 0x6;
 		if (r_w == READ)
 			info_word |= 0x10;
-		put (&memory[A[8]], (long)0x0016, (long) WORD);/* push information word */
+		put (&memory[A[8]], (Long)0x0016, (Long) WORD);/* push information word */
 		}
 	SR = SR | sbit;			/* force processor into supervisor state */
 	SR = SR & ~tbit;			/* turn off trace mode */

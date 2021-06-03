@@ -113,7 +113,7 @@ opDescriptor *operand;
 	if (operand->mode == Immediate)
 		return 0x3C;
 
-	printf("INVALID EFFECTIVE ADDRESSING MODE!\N");
+	printf("INVALID EFFECTIVE ADDRESSING MODE!\n");
 	exit (0);
 
 }

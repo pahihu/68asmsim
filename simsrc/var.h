@@ -20,8 +20,8 @@ program.  It is included in the module "sim.c" which contains main().
 #include "proto.h"		/* function prototypes */
 
 
-long 	D[D_REGS], OLD_D[D_REGS], A[A_REGS], OLD_A[A_REGS];
-long 	PC, OLD_PC;
+Long 	D[D_REGS], OLD_D[D_REGS], A[A_REGS], OLD_A[A_REGS];
+Long 	PC, OLD_PC;
 short	SR, OLD_SR;
 int	cycles, old_cycles;
 int 	trace, sstep, old_trace, old_sstep, exceptions;
@@ -33,12 +33,12 @@ int 	brkpt[100], wcount;
 int 	errflg;
 int 	inst;
 
-long	*EA1, *EA2;
-long	EV1, EV2;
+Long	*EA1, *EA2;
+Long	EV1, EV2;
 
-long	source, dest, result;
+Long	source, dest, result;
 
-long	global_temp;		/* to hold an immediate data operand */
+Long	global_temp;		/* to hold an immediate data operand */
 
 /* port structure is :{control,trans data,status,recieve data} */
 unsigned int port1[4] = {0x00,0,0x82,0};	/* simulated 6850 port */

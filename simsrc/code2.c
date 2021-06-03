@@ -21,7 +21,7 @@ The instructions implemented in this file are the data movement instructions
 
 int	EXG()
 {
-long	temp_reg;
+Long	temp_reg;
 int	Rx, Ry;
 
 Rx = (inst >> 9) & 0x07;
@@ -63,7 +63,7 @@ if (eff_addr (LONG, CONTROL_ADDR, FALSE))
 	return (BAD_INST);		/* bad instruction format */
 
 /* perform the LEA operation */
-A[a_reg(reg)] = (long) ((long)EA1 - (long)&memory[0]);
+A[a_reg(reg)] = (Long) ((long)EA1 - (long)&memory[0]);
 
 switch (eff_addr_code (inst, 0)) {
 	case 0x02 : inc_cyc (4);
@@ -100,7 +100,7 @@ if (eff_addr (LONG, CONTROL_ADDR, FALSE))
 /* effective address routine onto the stack */
 
 A[a_reg(7)] -= 4;
-put (&memory[A[a_reg(7)]], (long) ((long)EA1 - (long)&memory[0]), LONG);
+put (&memory[A[a_reg(7)]], (Long) ((long)EA1 - (long)&memory[0]), LONG);
 
 switch (eff_addr_code (inst, 0)) {
 	case 0x02 : inc_cyc (12);
@@ -130,12 +130,12 @@ return SUCCESS;
 int	LINK()
 {
 int	reg;
-long	temp, displacement;
+Long	temp, displacement;
 
 reg = inst & 0x07;
 
-mem_request (&PC, (long) WORD, &temp);
-from_2s_comp(temp, (long) WORD, &displacement);
+mem_request (&PC, (Long) WORD, &temp);
+from_2s_comp(temp, (Long) WORD, &displacement);
 
 /* perform the LINK operation */
 A[a_reg(7)] -= 4;

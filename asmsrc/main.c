@@ -103,12 +103,12 @@ int i;
 		p = outName + strlen(outName);
 
 	if (listFlag) {
-		strcpy(p, ".LIS");
+		strcpy(p, ".lis");
 		initList(outName);
 		}
 
 	if (objFlag) {
-		strcpy(p, ".H68");
+		strcpy(p, ".h68");
 		initObj(outName);
 	}
 

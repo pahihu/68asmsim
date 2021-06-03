@@ -24,14 +24,14 @@ The instructions implemented in this file are the integer arithmetic
 int	DIVS()
 {
 int	reg, overflow;
-long	remainder;
+Long	remainder;
 
-if (eff_addr ((long) WORD, DATA_ADDR, TRUE))
+if (eff_addr ((Long) WORD, DATA_ADDR, TRUE))
 	return (BAD_INST);			/* bad instruction format */
 
 reg = (inst >> 9) & 0x0007;
 
-from_2s_comp (EV1 & WORD, (long) WORD, &source);
+from_2s_comp (EV1 & WORD, (Long) WORD, &source);
 from_2s_comp (D[reg], LONG, &dest);
 
 if (source == 0)
@@ -61,7 +61,7 @@ else
 	result = (dest / source) & 0xffff;
 	remainder = (dest % source) & 0xffff;
 	D[reg] = result = result | (remainder * 0x10000);
-	cc_update (N_A, GEN, GEN, N_A, ZER, source, dest, result, (long) WORD, 0);
+	cc_update (N_A, GEN, GEN, N_A, ZER, source, dest, result, (Long) WORD, 0);
 	if ( ( (source < 0) && (dest >= 0) ) || ( (source >= 0) && (dest < 0) ) )
 		SR |= nbit;
 	else
@@ -80,7 +80,7 @@ int	DIVU()
 {
 int	reg;
 
-if (eff_addr ((long) WORD, DATA_ADDR, TRUE))
+if (eff_addr ((Long) WORD, DATA_ADDR, TRUE))
 	return (BAD_INST);			/* bad instruction format */
 
 reg = (inst >> 9) & 0x0007;
@@ -98,7 +98,7 @@ else
 	SR &= ~vbit;
 	D[reg] = result =((dest / source) & 0xffff) | ((dest % source) * 0x10000);
 
-	cc_update (N_A, GEN, GEN, N_A, ZER, source, dest, result, (long) WORD, 0);
+	cc_update (N_A, GEN, GEN, N_A, ZER, source, dest, result, (Long) WORD, 0);
 	}
 
 inc_cyc (140);
@@ -113,17 +113,17 @@ int	MULS()
 {
 int	reg;
 
-if (eff_addr ((long) WORD, DATA_ADDR, TRUE))
+if (eff_addr ((Long) WORD, DATA_ADDR, TRUE))
 	return (BAD_INST);			/* bad instruction format */
 
 reg = (inst >> 9) & 0x0007;
 
-from_2s_comp (EV1 & WORD, (long) WORD, &source);
-from_2s_comp (D[reg] & WORD, (long) WORD, &dest);
+from_2s_comp (EV1 & WORD, (Long) WORD, &source);
+from_2s_comp (D[reg] & WORD, (Long) WORD, &dest);
 
 D[reg] = result = source * dest;
 
-cc_update (N_A, GEN, GEN, CASE_9, ZER, source, dest, result, (long) WORD, 0);
+cc_update (N_A, GEN, GEN, CASE_9, ZER, source, dest, result, (Long) WORD, 0);
 
 inc_cyc (70);
 
@@ -137,7 +137,7 @@ int	MULU()
 {
 int	reg;
 
-if (eff_addr ((long) WORD, DATA_ADDR, TRUE))
+if (eff_addr ((Long) WORD, DATA_ADDR, TRUE))
 	return (BAD_INST);			/* bad instruction format */
 
 reg = (inst >> 9) & 0x0007;
@@ -159,7 +159,7 @@ return SUCCESS;
 
 int	NEG()
 {
-long	size;
+Long	size;
 
 if ((decode_size(&size)) ||
     (eff_addr (size, DATA_ALT_ADDR, TRUE)))
@@ -186,13 +186,13 @@ return SUCCESS;
 
 int	NEGX()
 {
-long	size;
+Long	size;
 
 if ((decode_size(&size)) ||
     (eff_addr (size, DATA_ALT_ADDR, TRUE)))
 	return (BAD_INST);		/* bad instruction format */
 
-dest = dest = EV1 & size;
+source = dest = EV1 & size;
 
 /* perform the NEGX operation */
 put (EA1, -dest - ((SR & xbit) >> 4), size);
@@ -215,7 +215,7 @@ return SUCCESS;
 
 int	CMP()
 {
-long	size;
+Long	size;
 int	reg;
 
 if ((decode_size(&size)) || 
@@ -241,7 +241,7 @@ return SUCCESS;
 
 int	CMPA()
 {
-long	size;
+Long	size;
 int	reg;
 
 if (inst & 0x0100)
@@ -274,7 +274,7 @@ return SUCCESS;
 
 int	CMPI()
 {
-long	size;
+Long	size;
 
 if (decode_size(&size))
 	return (BAD_INST);			/* bad instruction format */
@@ -305,7 +305,7 @@ return SUCCESS;
 
 int	CMPM()
 {
-long	size;
+Long	size;
 int	Rx, Ry;
 
 if (decode_size(&size)) 
@@ -346,7 +346,7 @@ return SUCCESS;
 
 int	TST()
 {
-long	size;
+Long	size;
 
 if ((decode_size(&size)) ||
     (eff_addr (size, DATA_ALT_ADDR, TRUE)))
@@ -372,7 +372,7 @@ return SUCCESS;
 
 int	CLR()
 {
-long	size;
+Long	size;
 
 if ((decode_size(&size)) ||
     (eff_addr (size, DATA_ALT_ADDR, TRUE)))
@@ -381,7 +381,7 @@ if ((decode_size(&size)) ||
 source = dest = EV1 & size;
 
 /* perform the CLR operation */
-put (EA1, (long) 0, size);
+put (EA1, (Long) 0, size);
 value_of (EA1, &result, size);
 
 cc_update (N_A, ZER, GEN, ZER, ZER, source, dest, result, size, 0);
@@ -402,7 +402,7 @@ return SUCCESS;
 
 int	EXT()
 {
-long	size;
+Long	size;
 int	reg;
 
 reg = inst & 0x07;

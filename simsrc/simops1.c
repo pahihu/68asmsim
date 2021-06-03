@@ -49,7 +49,7 @@ else
 		{
 		windowLine();
 		printf("invalid location...");
-		return;
+		return FAILURE;
 		}
 	stop = value - 1;
 	}
@@ -94,6 +94,7 @@ int selbp()          /* break point set, clear or display routine */
 		return FAILURE;
 		}
 
+   return SUCCESS;
 }
 
 
@@ -115,11 +116,12 @@ int sbpoint()                      /* set break point */
 
 	for (i = 0; i<bpoints; i++)
 		if(brkpt[i] == loc)
-			return;
+			return SUCCESS;
 	brkpt[bpoints++] = loc;
 	if (bpoints > 100)
 		bpoints = 100;
 
+   return SUCCESS;
 }
 
 
@@ -150,12 +152,13 @@ int cbpoint()                   /* clear break point */
 		{
 		windowLine();
 		printf("no break point at %04x",loc);
-		return;
+		return FAILURE;
 		}
 	--bpoints;
 	for (j = i; j < bpoints; j++) /* adjust breakpoint table and */
 		brkpt[j] = brkpt[j + 1];	/* decrement counter */
 
+   return SUCCESS;
 }
 
 
@@ -203,27 +206,27 @@ int loc;            /* mask is used to prevent reading out of memory array */
 
 int memwrite(loc, value)          /* write given value into given location */
 int loc;                 /* mask is used to prevent writing outside memory */
-long value;														
+Long value;														
 {
 
-	/* handler for MC6850 PIA                   THIS HANDLER IS COMMENTED OUT
+	/* handler for MC6850 PIA */
+#if defined(MC6850_PIA)
 	if ((loc & 0xfffe) == 0x1000)
-		/* within port1 folding * /
+		/* within port1 folding */
 		{
 		p1dif = TRUE;
-		if ((loc & 0x0001) == 0)	/* control register * /
+		if ((loc & 0x0001) == 0)	/* control register */
 			port1[0] = value;
 		else
-			/* transmit data * /
+			/* transmit data */
 			{
-			port1[1] = value;	/* load port * /
-			port1[2] &= 0xfd;	/* adjust status register * /
+			port1[1] = value;	/* load port */
+			port1[2] &= 0xfd;	/* adjust status register */
 			port1[2] |= 0x80;
 			}
 		return;
 		}
-
-	*/
+#endif
 
 		if ((value & 0xffff0000) != 0)
 			{
@@ -240,5 +243,7 @@ long value;
 			}
 		else
 			memory[loc & ADDRMASK] = (char) value;
+
+   return 0;
 }
 

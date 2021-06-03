@@ -23,7 +23,7 @@ int	ADD()
 {
 int	addr_modes_mask;			/* holds mask for use in 'eff_addr()' */
 int	reg;							/* holds data register number */
-long	size;							/* holds instruction size */
+Long	size;							/* holds instruction size */
 
 /* compute addressing modes mask from appropriate bit in instruction word */
 addr_modes_mask = (inst & 0x0100) ? MEM_ALT_ADDR : ALL_ADDR;
@@ -81,7 +81,7 @@ return SUCCESS;
 
 int	ADDA()
 {
-long	size;
+Long	size;
 int	reg;
 
 if (inst & 0x0100)
@@ -116,7 +116,7 @@ return SUCCESS;
 
 int	ADDI()
 {
-long	size;
+Long	size;
 
 if (decode_size(&size))
 	return (BAD_INST);			/* bad instruction format */
@@ -148,13 +148,13 @@ return SUCCESS;
 
 int	ADDQ()
 {
-long	size;
+Long	size;
 
 if (decode_size(&size))
 	return (BAD_INST);			/* bad size format */
 
 if ((inst & 0x38) == 0x8)		/* if address reg direct, operation is long */
-	size == LONG;
+	size = LONG;
 
 if (eff_addr (size, ALTERABLE_ADDR, TRUE))
 	return (BAD_INST);			/* bad effectove address format */
@@ -188,7 +188,7 @@ return SUCCESS;
 
 int	ADDX()
 {
-long	size;
+Long	size;
 int	Rx, Ry;
 
 if (decode_size(&size)) return (BAD_INST);
@@ -242,7 +242,7 @@ return SUCCESS;
 int	SUB()
 {
 int	addr_modes_mask, reg;
-long	size;
+Long	size;
 
 addr_modes_mask = (inst & 0x0100) ? MEM_ALT_ADDR : ALL_ADDR;
 
@@ -291,7 +291,7 @@ return SUCCESS;
 
 int	SUBA()
 {
-long	size;
+Long	size;
 int	reg;
 
 if (inst & 0x0100)
@@ -325,7 +325,7 @@ return SUCCESS;
 
 int	SUBI()
 {
-long	size;
+Long	size;
 
 if (decode_size(&size))
 	return (BAD_INST);			/* bad instruction format */
@@ -357,7 +357,7 @@ return SUCCESS;
 
 int	SUBQ()
 {
-long	size;
+Long	size;
 
 if (decode_size(&size))
 	return (BAD_INST);			/* bad size format */
@@ -398,7 +398,7 @@ return SUCCESS;
 
 int	SUBX()
 {
-long	size;
+Long	size;
 int	Rx, Ry;
 
 if (decode_size(&size)) 

@@ -21,13 +21,13 @@ The instructions implemented in this file are shift and rotate operations:
 
 int	SHIFT_ROT()
 {
-long	size;
+Long	size;
 int	reg, count_reg, shift_count, shift_size, type, counter, msb, mem_reg;
 int	direction, temp_bit, temp_bit_2;
 
-if (mem_reg = ((inst & 0xc0) == 0xc0))
+if ((mem_reg = (inst & 0xc0)) == 0xc0)
 	{
-	if (eff_addr ((long) WORD, MEM_ALT_ADDR, TRUE))
+	if (eff_addr ((Long) WORD, MEM_ALT_ADDR, TRUE))
 		return (BAD_INST);		/* bad instruction format */
 	size = WORD;
 	shift_count = 1;
@@ -202,7 +202,7 @@ return SUCCESS;
 
 int	SWAP()
 {
-long	reg;
+Long	reg;
 
 reg = inst & 0x07;
 
@@ -222,19 +222,19 @@ return SUCCESS;
 int	BIT_OP()
 {
 int	reg, mem_reg;
-long	size, bit_no;
+Long	size, bit_no;
 
 if (inst & 0x100)
 	bit_no = D[(inst >> 9) & 0x07];
 else
 	{
-	mem_request (&PC, (long) WORD, &bit_no);
+	mem_request (&PC, (Long) WORD, &bit_no);
 	bit_no = bit_no & 0xff;
 	}
 
 mem_reg = (inst & 0x38);
 
-if (eff_addr ((long) BYTE, DATA_ADDR, TRUE))
+if (eff_addr ((Long) BYTE, DATA_ADDR, TRUE))
 	return (BAD_INST);		/* bad instruction format */
 
 if (mem_reg)
@@ -293,15 +293,15 @@ return SUCCESS;
 int	TAS()
 {
 
-if (eff_addr ((long) BYTE, DATA_ALT_ADDR, TRUE))
+if (eff_addr ((Long) BYTE, DATA_ALT_ADDR, TRUE))
 	return (BAD_INST);		/* bad effective address format */
 
 /* perform the TAS operation */
 /* first set the condition codes according to *EA1 */
-cc_update (N_A, GEN, GEN, ZER, ZER, source, dest, *EA1, (long) BYTE, 0);
+cc_update (N_A, GEN, GEN, ZER, ZER, source, dest, *EA1, (Long) BYTE, 0);
 
 /* then set the high order bit of the *EA1 byte */
-put (EA1, EV1 | 0x80, (long) BYTE);
+put (EA1, EV1 | 0x80, (Long) BYTE);
 
 inc_cyc ((inst & 0x30) ? 10 : 4);
 

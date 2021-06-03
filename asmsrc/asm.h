@@ -14,9 +14,11 @@
 /* include system header files for prototype checking */
 #include <stdio.h>
 #include <string.h>
-#include <process.h>
 #include <stdlib.h>
+#ifdef MSDOS
+#include <process.h>
 #include <malloc.h>
+#endif
 
 
 /* Status values */
@@ -82,8 +84,8 @@
 
 /* Structure for operand descriptors */
 typedef struct {
-	long int mode;	/* Mode number (see below) */
-	long int data;	/* Immediate value, displacement, or absolute address */
+	long mode;	/* Mode number (see below) */
+	long data;	/* Immediate value, displacement, or absolute address */
 
 	char reg;	/* Principal register number (0-7) */
 	char index;	/* Index register number (0-7 = D0-D7, 8-15 = A0-A7) */
@@ -94,7 +96,7 @@ typedef struct {
 
 /* Structure for a symbol table entry */
 typedef struct symbolEntry {
-	long int value;			/* 32-bit value of the symbol */
+	long value;			/* 32-bit value of the symbol */
 	struct symbolEntry *next;	/* Pointer to next symbol in linked list */
 	char flags;			/* Flags (see below) */
 	char name[SIGCHARS+1];		/* Name */
@@ -112,7 +114,7 @@ typedef struct symbolEntry {
 /* Structure to describe one "flavor" of an instruction */
 
 typedef struct {
-	long int source,		/* Bit masks for the legal source...	*/
+	long source,		/* Bit masks for the legal source...	*/
 	    dest;		/*  and destination addressing modes	*/
 	char sizes;		/* Bit mask for the legal sizes */
 	int (*exec)(int, int, opDescriptor *, opDescriptor *, int *);

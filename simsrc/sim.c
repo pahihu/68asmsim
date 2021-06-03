@@ -13,13 +13,17 @@ This file contains the function 'main()' and various screen management
 
 
 #include <stdio.h>
+#include <stdlib.h>
 #include "var.h"         /* include declarations for global variables */
+#include "extern.h"
+#include "curterm.h"
 
 
-main()            /* main routine gives command prompt, */
+int main()            /* main routine gives command prompt, */
 {						/* scans instructions, and directs user interface */
 int count, refresh;
 
+PrepTerm(1);
 printf ("68000 Simulator\n");
 printf ("Version 1.0\n");
 init();
@@ -27,7 +31,7 @@ while (!same("exit",wordptr[0]))	{
 	refresh = TRUE;
 	windowLine();
 	printf("> ");			/* give prompt */
-	if (gets(lbuf,80) == NULL) 
+	if (GetS(lbuf,80) == NULL) 
 		exit(0);
 	scrollWindow();
 	count = scan(lbuf,wordptr,10);	      /* scan command and operands */
@@ -105,11 +109,12 @@ while (!same("exit",wordptr[0]))	{
 		restore_cursor();
 		}
 	}
+   return 0;
 }
 
 
 
-init()                     /* initialization for the simulator */
+void init()                     /* initialization for the simulator */
 {
 	int	i;
 
@@ -129,11 +134,10 @@ init()                     /* initialization for the simulator */
 	setdis();
 	scrshow();
 	at (8,1);
-
 }
 
 
-finish()               /* normal simulator exit */
+void finish()               /* normal simulator exit */
 {
 
 	at (24,1);
@@ -144,7 +148,7 @@ finish()               /* normal simulator exit */
 
 
 
-errmess()		/* error message for invalid input */
+void errmess()		/* error message for invalid input */
 {
 
 	printf("invalid input...");
@@ -154,7 +158,7 @@ errmess()		/* error message for invalid input */
 
 
 
-cmderr()					/* error message for an invalid command */
+void cmderr()					/* error message for an invalid command */
 {
 
 	printf ("invalid command");
@@ -166,25 +170,25 @@ cmderr()					/* error message for an invalid command */
 
 
 
-setdis()														/* shows register display */
+void setdis()                          /* shows register display */
 {
 
-	printf("<D0>  = %08lx  <D4>  = %08lx  <A0>  = %08lx  <A4> = %08lx\n",D[0],
-		D[4],A[0],A[4]);
-	printf("<D1>  = %08lx  <D5>  = %08lx  <A1>  = %08lx  <A5> = %08lx\n",D[1],
-		D[5],A[1],A[5]);
-	printf("<D2>  = %08lx  <D6>  = %08lx  <A2>  = %08lx  <A6> = %08lx\n",D[2],
-		D[6],A[2],A[6]);
-	printf("<D3>  = %08lx  <D7>  = %08lx  <A3>  = %08lx  <A7> = %08lx\n",D[3],
-		D[7],A[3],A[7]);
-	printf("trace:            sstep:            cycles: %6u    <A7'>= %08lx\n"
-		,cycles, A[8]);
-	printf("         cn  tr  st  rc           T S  INT   XNZVC    <PC> = %08lx\n"
-		,PC);
+	printf("<D0>  = %08x  <D4>  = %08x  <A0>  = %08x  <A4> = %08x\n",(int)D[0],
+		(int)D[4],(int)A[0],(int)A[4]);
+	printf("<D1>  = %08x  <D5>  = %08x  <A1>  = %08x  <A5> = %08x\n",(int)D[1],
+		(int)D[5],(int)A[1],(int)A[5]);
+	printf("<D2>  = %08x  <D6>  = %08x  <A2>  = %08x  <A6> = %08x\n",(int)D[2],
+		(int)D[6],(int)A[2],(int)A[6]);
+	printf("<D3>  = %08x  <D7>  = %08x  <A3>  = %08x  <A7> = %08x\n",(int)D[3],
+		(int)D[7],(int)A[3],(int)A[7]);
+	printf("trace:            sstep:            cycles: %6u    <A7'>= %08x\n"
+		,cycles, (int)A[8]);
+	printf("         cn  tr  st  rc           T S  INT   XNZVC    <PC> = %08x\n"
+		,(int)PC);
 	printf("  port1  %02x  %02x  %02x  %02x      SR =\n",
            port1[0],port1[1],port1[2],port1[3]);
-	printf("컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴�");
-	printf("컴컴컴컴컴컴컴컴컴컴컴컴\n");
+	printf("=======================================================");
+	printf("========================\n");
 	old_sstep = ~sstep;
 	old_trace = ~trace;
 	OLD_SR = ~SR;
@@ -192,7 +196,7 @@ setdis()														/* shows register display */
 }
 
 
-scrshow()					/* display processor registers and cycle counter */
+void scrshow()					/* display processor registers and cycle counter */
 {
 	int	j,k;
 
@@ -204,7 +208,7 @@ scrshow()					/* display processor registers and cycle counter */
 			OLD_D[j] = D[j];
 			if (j >= 4) k = 27; 		/* select the proper column for display */
 			at(j%4+1,k);
-			printf("%08lx",D[j]);
+			printf("%08x",(int)D[j]);
 			}
 		}
 
@@ -217,7 +221,7 @@ scrshow()					/* display processor registers and cycle counter */
 			if (j >= 4) k = 62; 		/* select the proper column for display */
 			at(j%4+1,k);
 			if (j == 8) at (5,k);
-			printf("%08lx",A[j]);
+			printf("%08x",(int)A[j]);
 			}
 		}
 	
@@ -246,7 +250,7 @@ scrshow()					/* display processor registers and cycle counter */
 		{
 		OLD_PC = PC;
 		at(6, 62);
-		printf ("%08lx",PC);
+		printf ("%08x",(int)PC);
 		}
 
 	if (sstep ^ old_sstep)

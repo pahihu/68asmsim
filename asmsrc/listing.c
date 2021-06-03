@@ -94,7 +94,7 @@ int	listLine()
 		fprintf(listFile, "%5d  %s", lineNum, line);
 	else
 		putc('\n', listFile);
-	if ferror(listFile) {
+	if (ferror(listFile)) {
 		fputs("Error writing to listing file\n", stderr);
 		exit(0);
 		}
@@ -129,10 +129,10 @@ int	size;
 		continuation = TRUE;
 		} 
 	switch (size) {
-		case BYTE : sprintf(listPtr, "%02X ", data & 0xFF);
+		case BYTE : sprintf(listPtr, "%02X ", (unsigned int)(data & 0xFF));
 			    		listPtr += 3;
 			    		break;
-		case WORD : sprintf(listPtr, "%04X ", data & 0xFFFF);
+		case WORD : sprintf(listPtr, "%04X ", (unsigned int)(data & 0xFFFF));
 			    		listPtr += 5;
 			    		break;
 		case LONG : sprintf(listPtr, "%08lX ", data);

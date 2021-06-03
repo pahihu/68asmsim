@@ -20,8 +20,8 @@ simulator program.  It is included in all modules other than the module
 #include "proto.h"		/* function prototypes */
 
 
-extern long			D[D_REGS], OLD_D[D_REGS], A[A_REGS], OLD_A[A_REGS];
-extern long			PC, OLD_PC;
+extern Long			D[D_REGS], OLD_D[D_REGS], A[A_REGS], OLD_A[A_REGS];
+extern Long			PC, OLD_PC;
 extern short		SR, OLD_SR;
 
 extern char			memory[MEMSIZE];
@@ -37,10 +37,19 @@ extern char			p1dif;
 extern int			errflg;
 extern int			trace, sstep, old_trace, old_sstep, exceptions;
 extern int			inst;
-extern long			*EA1, *EA2;
-extern long			EV1, EV2;
+extern Long			*EA1, *EA2;
+extern Long			EV1, EV2;
 
-extern long			source, dest, result;
+extern Long			source, dest, result;
 
-extern long			global_temp;		/* to hold an immediate data operand */
+extern Long			global_temp;		/* to hold an immediate data operand */
+
+extern char       *GetS(char *str, int len);
+extern int        scan(char*, char **, int);
+
+extern void       windowLine(void);
+extern void       scrollWindow(void);
+extern void       save_cursor(void);
+extern void       restore_cursor(void);
+
 

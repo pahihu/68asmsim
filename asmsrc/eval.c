@@ -430,7 +430,7 @@ long	*result;
 				   }
 			   else
 				   return DIV_BY_ZERO;
-		default  : printf("DoOp: Operator error  op = '%c' val1 = %d val2 = %d\n", op, val1, val2);
+		default  : printf("DoOp: Operator error  op = '%c' val1 = %ld val2 = %ld\n", op, val1, val2);
 		}
 
 	return NORMAL;

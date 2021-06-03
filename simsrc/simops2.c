@@ -17,6 +17,7 @@ The routines are :
 
 
 #include <stdio.h>
+#include <stdlib.h>
 #include "extern.h"
 
 
@@ -45,13 +46,13 @@ int alter()
 int hex_to_dec()
 {
 	char	*num_string;
-	long	number;
+	Long	number;
 
 	num_string = gettext(2,"Hex number ? ");
-	if (sscanf (num_string,"%08lx", &number) != 1)
+	if (sscanf (num_string,"%08x", &number) != 1)
 		errflg = TRUE;
 
-	printf ("Decimal value = %ld", number);
+	printf ("Decimal value = %d", number);
 	windowLine();
 	return SUCCESS;
 
@@ -61,14 +62,14 @@ int hex_to_dec()
 int dec_to_hex()
 {
 	char	*num_string;
-	long	number;
+	Long	number;
 
 	num_string = gettext(2,"Decimal number ? ");
 
-	if (sscanf (num_string,"%ld", &number) != 1)
+	if (sscanf (num_string,"%d", &number) != 1)
 		errflg = TRUE;
 
-	printf ("Hex value = %08lx", number);
+	printf ("Hex value = %08x", number);
 	windowLine();
 	return SUCCESS;
 
@@ -79,7 +80,7 @@ int dec_to_hex()
 
 int intmod()
 {
-	long	count, newvalue;
+	Long	count, newvalue;
 	char	*inp;
 
 	inp = gettext(3,"New Interrupt Mask? ");
@@ -123,7 +124,7 @@ int portmod()
 
 int pcmod()
 {
-	long	count, newvalue;
+	Long	count, newvalue;
 	char	*inp;
 
 	inp = gettext(3,"Location? ");
@@ -139,12 +140,12 @@ int pcmod()
 
 
 int changemem(oldval, result)          /* gets new value for memory modify */
-long oldval, *result;
+Long oldval, *result;
 {				
-	long	i, count;
+	Long	i, count;
 
 	errflg = 0;
-	if (gets(lbuf,80) == NULL) exit(0);
+	if (GetS(lbuf,80) == NULL) exit(0);
 	scrollWindow();
 	count = scan(lbuf,wordptr,1);  		/* scan 1 string of input */
 	i = oldval;
@@ -154,18 +155,18 @@ long oldval, *result;
 		if (errflg)
 			i = oldval;
 		}
-	*result = i;
-	return -1;
+	if(result) *result = i;
+	return i;
 
 }
 
 
 
 
-int mmod()                               /* modify memory */
+void mmod()                               /* modify memory */
 {
 int	aloc;
-long	value, newval;
+Long	value, newval;
 
 aloc = getval(3,"Location? ");          /* get location to start modifying */
 while (!same(".",wordptr[0]))      /* modify memory until a "." is entered */
@@ -197,14 +198,14 @@ int regmod (regpntr, data_or_mem)            /* modify processor registers */
 char	*regpntr;
 int	data_or_mem;
 {
-	long	regnum, i, value;
+	Long	regnum, i, value;
 
 	errflg = FALSE;
 	/* pick up register number */
 	if (sscanf(regpntr,"%d",&regnum) != 1)	{
 		cmderr();
 		errflg = TRUE;
-		return;
+		return (0);
 		}
 
 	if (wcount >= 3) {
@@ -228,13 +229,13 @@ int	data_or_mem;
 			{
 			if (data_or_mem == MODIFY_DATA)    /* we're entering D regs */
 				{
-				printf("<D%01d> = %lx ? ", i, D[i]);
-				D[i] = changemem(D[i]);
+				printf("<D%01d> = %x ? ", i, D[i]);
+				D[i] = changemem(D[i], NULL);
 				}
 			else
 				{
-				printf("<A%01d> = %lx ? ", i, A[i]);
-				A[i] = changemem(A[i]);
+				printf("<A%01d> = %x ? ", i, A[i]);
+				A[i] = changemem(A[i], NULL);
 				}
 
 			/* if error allow retry */
@@ -256,7 +257,8 @@ int mfill()                  /* load memory with contents of s_record file */
 {
 	FILE 	*fp;
 	int 	checksum, line, loc, end__of__file;
-	char 	byte, s_type, nambuf[40], *name;
+   unsigned int byte;
+	char 	s_type, nambuf[40], *name;
 	char 	*mkfname(), *gettext(), *bufptr, *bufend;
 
 	name = gettext(2,"Filename? ");
@@ -330,7 +332,7 @@ int mfill()                  /* load memory with contents of s_record file */
 		windowLine();
 		printf("Invalid data on line %d of file...",line);
 		windowLine();
-		printf ("%d: %s", line, line, lbuf);
+		printf ("%d: %s", line, lbuf);
 		windowLine();
 	 	printf("Remainder of load aborted...");
 		windowLine();
@@ -346,7 +348,7 @@ int clear()                   /* clear memory, registers, port, and cycles */
 {
 	char	*resp, *gettext();
 	int	all, validr, flag, i;
-	long	loop_counter;
+	Long	loop_counter;
 
 	flag = 0;
 	validr = FALSE;

@@ -17,8 +17,9 @@ The routines are :
 
 
 #include <stdio.h>
+#include <stdlib.h>
+#include <ctype.h>
 #include "extern.h"
-
 
 char *gettext(word,prompt)     /* returns pointer to scanned word, prompts */
 int	word;                                      /* for input if necessary */
@@ -34,7 +35,7 @@ char	*prompt;
 		{
 		printf("%s",prompt);
 		
-		if (gets(lbuf,20)==NULL) exit(0);
+		if (GetS(lbuf,20)==NULL) exit(0);
 		scrollWindow();
 		if ((p = scan(lbuf,wordptr,5)) < 1) 
 			errflg = TRUE;
@@ -116,16 +117,16 @@ char *string;
 
 int eval2(string, result)      /* evaluate string and return result in the */
 char *string;                                            /* long parameter */
-long	*result;
+Long	*result;
 {
 	char *tmpptr, bit;
-	long int value;
+	Long value;
 
 	errflg = FALSE;
 	switch (*string)	/* look at the first character */
 		{
 		case '$':		/* hex input */
-			if (sscanf(string+1, "%08lx", &value) != 1)
+			if (sscanf(string+1, "%08x", &value) != 1)
 				errflg = TRUE;
 			break;
 		case '.':		/* decimal input */
@@ -155,7 +156,7 @@ long	*result;
 				}
 			break;
 		default:		/* default is hex input */
-			if (sscanf(string, "%08lx", &value) != 1)
+			if (sscanf(string, "%08x", &value) != 1)
 				errflg = TRUE;
 		}
 	*result = value;
@@ -178,7 +179,7 @@ int value, p, i, pwrd;
 	while (errflg)
 		{
 		printf("%s",prompt);
-		if (gets(lbuf,20)==NULL) exit(0);
+		if (GetS(lbuf,20)==NULL) exit(0);
 		scrollWindow();
 		if ((p = scan(lbuf,wordptr,5)) < 1) 
 			errflg = TRUE;
@@ -201,7 +202,7 @@ int strcopy(str1,str2)
 char *str1, *str2;
 {
 
-	while (*str2++ = *str1++);
+	while ((*str2++ = *str1++));
 	return SUCCESS;
 
 }
@@ -226,12 +227,12 @@ char *cp1, *cp2, *outbuf;
 
 
 int pchange(oldval)
-char oldval;
+int oldval;
 {
 	char nval;
 
 	errflg = 0;
-	if (gets(lbuf,80) == NULL) 
+	if (GetS(lbuf,80) == NULL) 
 		exit(0);
 	scrollWindow();
 	wcount = scan(lbuf,wordptr,1);

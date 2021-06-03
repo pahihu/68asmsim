@@ -62,15 +62,15 @@ else
 result = result + (temp_result << 4);
 
 if (inst & 0x0008)
-	put (&memory[A[Rx]], result, (long) BYTE);
+	put (&memory[A[Rx]], result, (Long) BYTE);
 else
-	put (&D[Rx], result, (long) BYTE);
+	put (&D[Rx], result, (Long) BYTE);
 if (carry)
 	SR = SR | cbit;
 else
 	SR = SR & ~cbit;
 
-cc_update (GEN, UND, CASE_1, UND, N_A, source, dest, result, (long) BYTE, 0);
+cc_update (GEN, UND, CASE_1, UND, N_A, source, dest, result, (Long) BYTE, 0);
 
 inc_cyc ( (inst & 0x0008) ? 18 : 6);
 
@@ -123,16 +123,16 @@ else
 result = result + (temp_result << 4);
 
 if (inst & 0x0008)
-	put (&memory[A[Rx]], result, (long) BYTE);
+	put (&memory[A[Rx]], result, (Long) BYTE);
 else
-	put (&D[Rx], result, (long) BYTE);
+	put (&D[Rx], result, (Long) BYTE);
 
 if (borrow)
 	SR = SR | cbit;
 else
 	SR = SR & ~cbit;
 
-cc_update (GEN, UND, CASE_1, UND, N_A, source, dest, result, (long) BYTE, 0);
+cc_update (GEN, UND, CASE_1, UND, N_A, source, dest, result, (Long) BYTE, 0);
 
 inc_cyc ( (inst & 0x0008) ? 18 : 6);
 
@@ -146,7 +146,7 @@ int	NBCD()
 {
 int	borrow, temp_result;
 
-if (eff_addr ((long) BYTE, DATA_ALT_ADDR, TRUE))
+if (eff_addr ((Long) BYTE, DATA_ALT_ADDR, TRUE))
 	return (BAD_INST);			/* illegal effective address */
 
 dest = EV1 & BYTE;
@@ -173,9 +173,9 @@ if (borrow)
 else
 	SR = SR & ~cbit;
 
-put (EA1, result, (long) BYTE);
+put (EA1, result, (Long) BYTE);
 
-cc_update (GEN, UND, CASE_1, UND, N_A, source, dest, result, (long) BYTE, 0);
+cc_update (GEN, UND, CASE_1, UND, N_A, source, dest, result, (Long) BYTE, 0);
 
 inc_cyc ( (inst & 0x0030) ? 8 : 6);
 

@@ -22,7 +22,7 @@ The instructions implemented in this file are the logical arithmetic
 int	AND()
 {
 int	addr_modes_mask, reg;
-long	size;
+Long	size;
 
 addr_modes_mask = (inst & 0x0100) ? MEM_ALT_ADDR : DATA_ADDR;
 
@@ -71,7 +71,7 @@ return SUCCESS;
 
 int	ANDI()
 {
-long	size;
+Long	size;
 
 if (decode_size(&size))
 	return (BAD_INST);			/* bad instruction format */
@@ -100,9 +100,9 @@ return SUCCESS;
 
 int	ANDI_TO_CCR()
 {
-long	temp;
+Long	temp;
 
-mem_request (&PC, (long) WORD, &temp);
+mem_request (&PC, (Long) WORD, &temp);
 
 SR &= temp | 0xff00;
 
@@ -115,12 +115,12 @@ return SUCCESS;
 
 int	ANDI_TO_SR()
 {
-long	temp;
+Long	temp;
 
 if (!(SR & sbit))
 	return (NO_PRIVILEGE);
 
-mem_request (&PC, (long) WORD, &temp);
+mem_request (&PC, (Long) WORD, &temp);
 SR &= temp;
 
 inc_cyc (20);
@@ -134,7 +134,7 @@ return SUCCESS;
 
 int	OR()
 {
-long	size;
+Long	size;
 int	mask, reg;
 
 mask = (inst & 0x0100) ? MEM_ALT_ADDR : DATA_ADDR;
@@ -184,7 +184,7 @@ return SUCCESS;
 
 int	ORI()
 {
-long	size;
+Long	size;
 
 if (decode_size(&size))
 	return (BAD_INST);			/* bad instruction format */
@@ -215,9 +215,9 @@ return SUCCESS;
 
 int	ORI_TO_CCR()
 {
-long	temp;
+Long	temp;
 
-mem_request (&PC, (long) WORD, &temp);
+mem_request (&PC, (Long) WORD, &temp);
 
 SR |= temp;
 
@@ -230,12 +230,12 @@ return SUCCESS;
 
 int	ORI_TO_SR()
 {
-long	temp;
+Long	temp;
 
 if (!(SR & sbit))
 	return (NO_PRIVILEGE);
 
-mem_request (&PC, (long) WORD, &temp);
+mem_request (&PC, (Long) WORD, &temp);
 SR |= temp;
 
 inc_cyc (20);
@@ -248,7 +248,7 @@ return SUCCESS;
 
 int	EOR()
 {
-long	size;
+Long	size;
 int	reg;
 
 if ((decode_size(&size)) ||
@@ -278,7 +278,7 @@ return SUCCESS;
 
 int	EORI()
 {
-long	size;
+Long	size;
 int	data;
 
 if (decode_size(&size))
@@ -310,9 +310,9 @@ return SUCCESS;
 
 int	EORI_TO_CCR()
 {
-long	temp;
+Long	temp;
 
-mem_request (&PC, (long) WORD, &temp);
+mem_request (&PC, (Long) WORD, &temp);
 
 SR ^= temp;
 
@@ -325,12 +325,12 @@ return SUCCESS;
 
 int	EORI_TO_SR()
 {
-long	temp;
+Long	temp;
 
 if (!(SR & sbit))
 	return (NO_PRIVILEGE);
 
-mem_request (&PC, (long) WORD, &temp);
+mem_request (&PC, (Long) WORD, &temp);
 SR ^= temp;
 
 inc_cyc (20);
@@ -342,7 +342,7 @@ return SUCCESS;
 
 int	NOT()
 {
-long	size;
+Long	size;
 
 if ((decode_size(&size)) ||
     (eff_addr (size, DATA_ALT_ADDR, TRUE)))

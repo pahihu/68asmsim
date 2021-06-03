@@ -11,31 +11,52 @@ This file contains system-dependent calls to manipulate the screen.
 
 
 #include <stdio.h>
+#ifdef MSDOS
 #include <conio.h>
 #include <dos.h>
+union REGS regs;
+#else
+#include "curterm.h"
+#endif
 #include "extern.h"
 
 
-union REGS regs;
 int	row, col;
 
+#ifndef MSDOS
+#include <unistd.h>
+#include <string.h>
 
-at(y,x)         /* position cursor at line y (y=1..25), column x (x=1..80) */
+void vt100(char *seq)
+{
+   char buf[16];
+
+   fflush(stdout);
+   sprintf(buf,"\033%s",seq);
+   write(1,buf,strlen(buf));
+}
+#endif
+
+
+int at(y,x)    /* position cursor at line y (y=1..25), column x (x=1..80) */
 int x,y;
 {
-
+#ifdef MSDOS
 	regs.h.ah = 2;                /* function 2 is cursor position function */
 	regs.h.bh = 0;
 	regs.h.dh = (y - 1) & 0xff;
 	regs.h.dl = (x - 1) & 0xff;
 	int86 (0x10, &regs, &regs);
 	return (regs.x.cflag);
-
+#else
+   GotoXY(x, y);
+   return SUCCESS;
+#endif
 }
 
 
 
-home()
+int home()
 {
 
 	at(1,1);
@@ -47,7 +68,7 @@ home()
 
 int	clrscr()            /* clear screen by using bios scroll up function */
 {
-
+#ifdef MSDOS
 	regs.h.ah = 6;			/* function 6 is scroll-up */
 	regs.h.al = 0;			/* entire screen */
 	regs.h.bh = 0x2007;	/* use attribute 0x2007 */
@@ -58,6 +79,10 @@ int	clrscr()            /* clear screen by using bios scroll up function */
 	int86 (0x10, &regs, &regs);
 
 	return (regs.x.cflag);
+#else
+   ClrScr();
+   return SUCCESS;
+#endif
 
 }
 
@@ -65,11 +90,17 @@ int	clrscr()            /* clear screen by using bios scroll up function */
 char chk_buf()                /* read a character from the keyboard buffer */
                                        /* return '\0' if nothing available */
 {
-
+#ifdef MSDOS
 	if (kbhit())
 		return (bdos(0x07) & 0x00ff);
 	else
 		return ('\0');
+#else
+   if (HasKey())
+      return GetKey();
+   else
+      return ('\0');
+#endif
 
 }
 
@@ -78,7 +109,7 @@ char chk_buf()                /* read a character from the keyboard buffer */
 
 void	windowLine()
 {
-
+#ifdef MSDOS
 	regs.h.ah = 3;							/* function 3 = read cursor position */
 	regs.h.bh = 0;							/* page 0 */
 	int86 (0x10, &regs, &regs);
@@ -103,6 +134,9 @@ void	windowLine()
 	regs.h.dl = 0;							/* column 0 */
 
 	int86 (0x10, &regs, &regs);		/* call video services BIOS function */
+#else
+   vt100("E");
+#endif
 
 }
 
@@ -113,7 +147,7 @@ void	windowLine()
 
 void	scrollWindow()
 {
-
+#ifdef MSDOS
 	regs.h.ah = 3;							/* function 3 = read cursor position */
 	regs.h.bh = 0;							/* page 0 */
 	int86 (0x10, &regs, &regs);
@@ -135,31 +169,53 @@ void	scrollWindow()
 
 		int86 (0x10, &regs, &regs);		/* call video services BIOS function */
 		}
+#else
+   vt100("D");
+#endif
 
 }
 
 
 void	save_cursor()
 {
-
+#ifdef MSDOS
 	regs.h.ah = 3;							/* function 3 = read cursor position */
 	regs.h.bh = 0;							/* page 0 */
 	int86 (0x10, &regs, &regs);
 	row = regs.h.dh;
 	col = regs.h.dl;
+#else
+   vt100("7");
+#endif
 
 }
 
 
 void	restore_cursor()
 {
-
+#ifdef MSDOS
 	regs.h.ah = 2;							/* set cursor position */
 	regs.h.bh = 0;							/* page 0 */
 	regs.h.dh = row;						/* row */
 	regs.h.dl = col;						/* column */
 
 	int86 (0x10, &regs, &regs);		/* call video services BIOS function */
+#else
+   vt100("8");
+#endif
 
+}
+
+char *GetS(str, len)
+char *str;
+int len;
+{
+   char *ret;
+
+   PrepTerm(0);
+	ret = fgets(str, len, stdin);
+   PrepTerm(1);
+   vt100("[1A");
+   return ret;
 }
 

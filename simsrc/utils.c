@@ -24,16 +24,16 @@ The routines are :
 /**************************** int to_2s_comp () ****************************
 
    name       : int to_2s_comp (number, size, result)
-   parameters : long number : the number to be converted to 2's compliment
-                long size : the size of the operation
-                long *result : the result of the conversion
+   parameters : Long number : the number to be converted to 2's compliment
+                Long size : the size of the operation
+                Long *result : the result of the conversion
    function   : to_2s_comp() converts a number to 2's compliment notation.
 
 
 ****************************************************************************/
 
 int	to_2s_comp (number, size, result)
-long	number, size, *result;
+Long	number, size, *result;
 {
 
 if (size == LONG)
@@ -68,9 +68,9 @@ return SUCCESS;
 /**************************** int from_2s_comp () **************************
 
    name       : int from_2s_comp (number, size, result)
-   parameters : long number : the number to be converted to 2's compliment
-                long size : the size of the operation
-                long *result : the result of the conversion
+   parameters : Long number : the number to be converted to 2's compliment
+                Long size : the size of the operation
+                Long *result : the result of the conversion
    function   : from_2s_comp() converts a number from 2's compliment 
                   notation to the "C" language format so that operations
                   may be performed on it.
@@ -80,7 +80,7 @@ return SUCCESS;
 
 
 int	from_2s_comp (number, size, result)
-long	number, size, *result;
+Long	number, size, *result;
 {
 
 if (size == LONG)
@@ -124,8 +124,8 @@ return SUCCESS;
 
    name       : int sign_extend (number, size_from, result)
    parameters : int number : the number to sign extended
-                long size_from : the size of the source
-                long *result : the result of the sign extension
+                Long size_from : the size of the source
+                Long *result : the result of the sign extension
    function   : sign_extend() sign-extends a number from byte to word or
                   from word to long.
 
@@ -134,8 +134,8 @@ return SUCCESS;
 
 int	sign_extend (number, size_from, result)
 int	number;
-long	size_from;
-long	*result;
+Long	size_from;
+Long	*result;
 {
 
 	*result = number & size_from;
@@ -165,6 +165,7 @@ int	num;
 {
 
    cycles = cycles + num;
+   return cycles;
 
 }
 
@@ -245,9 +246,9 @@ int	reg_num;
 /**************************** int mem_put() ********************************
 
    name       : int mem_put(data, loc, size)
-   parameters : long data : the data to be placed in memory
+   parameters : Long data : the data to be placed in memory
                 int loc   : the location to place the data
-                long size : the appropriate size mask for the operation
+                Long size : the appropriate size mask for the operation
    function   : mem_put() puts data in main memory.  It acts as the "memory
                   management unit" in that it checks for out-of-bound
                   virtual addresses and odd memory accesses on long and
@@ -259,9 +260,9 @@ int	reg_num;
 ****************************************************************************/
 
 int	mem_put (data, loc, size)
-long	data;
+Long	data;
 int	loc;
-long	size;
+Long	size;
 {
 
 /* check for odd location reference on word and longword writes */
@@ -274,7 +275,7 @@ if ((loc % 2 != 0) && (size != BYTE))
 	printf ("  was writing to location %4x", loc);
 	windowLine();
 	mem_req (0xc, LONG, &PC);
-	exception (0, (long) loc, WRITE);
+	exception (0, (Long) loc, WRITE);
 	return (FAILURE);
 	}
 
@@ -288,7 +289,7 @@ if ((loc < 0) || (loc > MEMSIZE))
 	printf ("  was writing to location %4x", loc);
 	windowLine();
 	mem_req (0x8, LONG, &PC);
-	exception (0, (long) loc, WRITE);
+	exception (0, (Long) loc, WRITE);
 	return (FAILURE);
 	}
 
@@ -319,8 +320,8 @@ return SUCCESS;
 
    name       : int mem_req(loc, size, result)
    parameters : int loc : the memory location to read data from
-                long size : the appropriate size mask for the operation
-                long *result : a pointer to the longword location  
+                Long size : the appropriate size mask for the operation
+                Long *result : a pointer to the longword location  
                       to store the result in
    function   : mem_req() returns the contents of a location in main 
                   memory.  It acts as the "memory management unit" in 
@@ -335,10 +336,10 @@ return SUCCESS;
 
 int	mem_req (loc, size, result)
 int	loc;
-long	size;
-long	*result;
+Long	size;
+Long	*result;
 {
-long	temp;
+Long	temp;
 
 /* check for odd location reference on word and longword reads. */
 /* If there is a violation, initiate an address exception */
@@ -351,7 +352,7 @@ if ((loc % 2 != 0) && (size != BYTE))
 	printf ("  was reading from location %4x", loc);
 	windowLine();
 	mem_req (0xc, LONG, &PC);
-	exception (0, (long) loc, READ);
+	exception (0, (Long) loc, READ);
 	return (FAILURE);
 	}
 
@@ -367,7 +368,7 @@ if ((loc < 0) || (loc > MEMSIZE))
 	printf ("  was reading from location %4x", loc);
 	windowLine();
 	mem_req (0x8, LONG, &PC);
-	exception (0, (long) loc, READ);
+	exception (0, (Long) loc, READ);
 	return (FAILURE);
 	}
 
@@ -395,8 +396,8 @@ return SUCCESS;
 
    name       : int mem_request (loc, size, result)
    parameters : int *loc : the memory location to read data from
-                long size : the appropriate size mask for the operation
-                long *result : a pointer to the longword location  
+                Long size : the appropriate size mask for the operation
+                Long *result : a pointer to the longword location  
                       to store the result in
    function   : mem_request() is another "level" of main-memory access.
                   It performs the task of calling the functin mem_req()
@@ -416,24 +417,25 @@ return SUCCESS;
 
 int	mem_request (loc, size, result)
 int	*loc;
-long	size;
-long	*result;
+Long	size;
+Long	*result;
 {
 	int	req_result;
 
 	if (size == LONG)
 		req_result = mem_req (*loc, LONG, result);
 	else
-		req_result = mem_req (*loc, (long) WORD, result);
+		req_result = mem_req (*loc, (Long) WORD, result);
 
 	if (size == BYTE)
 		*result = *result & 0xff;
 
-	if (!req_result)
+	if (!req_result) {
 		if (size == LONG)
 			*loc += 4;
 		else
 			*loc += 2;
+   }
 
 	return req_result;
 
@@ -445,9 +447,9 @@ long	*result;
 /**************************** int put() ************************************
 
    name       : int put (dest, source, size)
-   parameters : long *dest : the destination to move data to
-                long source : the data to move
-                long size : the appropriate size mask for the operation
+   parameters : void *dest : the destination to move data to
+                Long source : the data to move
+                Long size : the appropriate size mask for the operation
    function   : put() performs the task of putting the result of some
                   operation into a destination location "according to 
                   size".  This means that the bits of the destination
@@ -461,16 +463,20 @@ long	*result;
 
 ****************************************************************************/
 
-int	put (dest, source, size)
-long	*dest, source, size;
+void	put (dest, source, size)
+void	*dest;
+Long source, size;
 
 {
+   Long *ptr;
 
-	if (( (int)dest >= (int)&memory[0]) &&
-			((int)dest <= (int)&memory[MEMSIZE]))
-		mem_put (source, (int) ((int)dest - (int)&memory[0]), size);
-	else
-		*dest = (source & size) | (*dest & ~size);
+	if (( (long)dest >= (long)&memory[0]) &&
+			((long)dest <= (long)&memory[MEMSIZE]))
+		mem_put (source, (int) ((long)dest - (long)&memory[0]), size);
+	else {
+      ptr = dest;
+		*ptr = (source & size) | (*ptr & ~size);
+   }
 
 }
 
@@ -480,9 +486,9 @@ long	*dest, source, size;
 /**************************** int value_of() *******************************
 
    name       : int value_of (EA, EV, size)
-   parameters : long *EA : the location of the data to be evaluated
-                long *EV : the location of the result
-                long size : the appropriate size mask
+   parameters : Long *EA : the location of the data to be evaluated
+                Long *EV : the location of the result
+                Long size : the appropriate size mask
    function   : value_of() returns the value of the location referenced
                   regardless of whether it is a virtual memory location
                   or a 68000 register location.  The "C" language stores
@@ -494,14 +500,14 @@ long	*dest, source, size;
 ****************************************************************************/
 
 
-int	value_of (EA, EV, size)
-long	*EA, *EV, size;
+void	value_of (EA, EV, size)
+Long	*EA, *EV, size;
 {
 
-	if (((int)EA < (int)&memory[0]) || ((int)EA > (int)&memory[MEMSIZE]))
+	if (((long)EA < (long)&memory[0]) || ((long)EA > (long)&memory[MEMSIZE]))
 		*EV = *EA & size;
 	else
-		mem_req ( (int) ((int)EA - (int)&memory[0]), size, EV);
+		mem_req ( (int) ((long)EA - (long)&memory[0]), size, EV);
 
 }
 
@@ -513,10 +519,10 @@ long	*EA, *EV, size;
    name       : int cc_update (x, n, z, v, c, source, dest, result, size, r)
    parameters : int x, n, z, v, c : the codes for actions that should be
                     taken to compute the different condition codes.
-                long source : the source operand for the instruction
-                long dest : the destination operand for the instruction
-                long result : the result of the instruction
-                long size : the size of the instruction
+                Long source : the source operand for the instruction
+                Long dest : the destination operand for the instruction
+                Long result : the result of the instruction
+                Long size : the size of the instruction
                 int r : the shift count for shift and rotate instructions
    function   : updates the five condition codes according to the codes
                   passed as parameters.  each of the condition codes
@@ -537,13 +543,13 @@ long	*EA, *EV, size;
 
 int	cc_update (x, n, z, v, c, source, dest, result, size, r)
 int	x, n, z, v, c;
-long	source, dest, result;
-long	size;
+Long	source, dest, result;
+Long	size;
 int	r;
 {
 int	x_bit, n_bit, z_bit, v_bit, c_bit;
-long	Rm, Dm, Sm;
-long	count, temp1, temp2, m;
+Long	Rm, Dm, Sm;
+Long	count, temp1, temp2, m;
 
 /* assign the bits to their variables here */
 x_bit = SR & xbit;
@@ -677,7 +683,7 @@ switch (condition)
 		   break;
 	case F : result = 0;				/* false */
 		   break;
-	case HI : result = !(SR & cbit) && !(SR && zbit);	/* high */
+	case HI : result = !(SR & cbit) && !(SR & zbit);	/* high */
 		   break;
 	case LS : result = (SR & cbit) || (SR & zbit);	/* low or same */
 		   break;

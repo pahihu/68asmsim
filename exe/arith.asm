@@ -11,6 +11,7 @@
 * ADDA
 
 	ADDA.W	#$1234,A4
+   ADDA.L   #$12,A6
 	ADDA.L	(A5)+,A0
 
 * ADDI

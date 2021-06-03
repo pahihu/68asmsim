@@ -22,14 +22,14 @@ related operations:
 int	CHK()
 {
 int	reg;
-long	temp;
+Long	temp;
 
 reg = (inst >> 9) & 0x07;
 
-if (eff_addr ((long) WORD, DATA_ADDR, TRUE))
+if (eff_addr ((Long) WORD, DATA_ADDR, TRUE))
 	return (BAD_INST);		/* bad instruction format */
 
-from_2s_comp (EV1, (long) WORD, &source);
+from_2s_comp (EV1, (Long) WORD, &source);
 dest = D[reg] & WORD;
 
 cc_update (N_A, GEN, UND, UND, UND, source, D[reg], D[reg], WORD, 0);
@@ -73,12 +73,12 @@ return SUCCESS;
 
 int	STOP()
 {
-long	temp;
+Long	temp;
 int	tr_on;
 
 inc_cyc (4);
 
-mem_request (&PC, (long) WORD, &temp);
+mem_request (&PC, (Long) WORD, &temp);
 
 if (SR & tbit)
 	tr_on = TRUE;
