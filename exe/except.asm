@@ -1,0 +1,28 @@
+
+
+	ORG	$50
+
+* CHK
+
+	CHK	(A1),D5
+
+* ILLEGAL
+
+	ILLEGAL
+
+* RESET
+
+	RESET
+
+* STOP
+
+	STOP	#$fFFF
+
+* TRAP
+
+	TRAP	#$8
+
+* TRAPV
+
+	TRAPV
+
